@@ -1,0 +1,11 @@
+#navbar{
+    z-index: 1000;
+}
+#spotlight{
+    z-index: 500;
+}
+.active {
+    font-weight: bold;
+    color: red; /* Change this to your desired highlight color */
+  }
+  
