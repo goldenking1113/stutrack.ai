@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { initializeApp } from 'firebase/app';
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from 'firebase/auth';
 import { Link, useLocation } from "react-router-dom";
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const firebaseConfig = {
   apiKey: "AIzaSyAaSn-jTG1Kkjaxf2_AeqzwAe69f7jWPeg",
@@ -37,6 +39,9 @@ export default function Login() {
         const errorCode = error.code;
         const errorMessage = error.message;
         console.error("Sign in error:", errorMessage);
+        const errorText = errorMessage.split("/")[1];
+console.log(errorText);
+        toast.error(errorText);
       });
   };
 
@@ -54,11 +59,16 @@ export default function Login() {
         const errorCode = error.code;
         const errorMessage = error.message;
         console.error("Registration error:", errorMessage);
+        const errorText = errorMessage.split("/")[1];
+console.log(errorText);
+        toast.error(errorText);
       });
   };
 
   return (
     <main className="w-full h-screen flex flex-col items-center justify-center px-4">
+          <ToastContainer />
+
       <div className="max-w-sm w-full text-gray-600 space-y-5">
         <div className="text-center pb-8">
         <Link to="/">

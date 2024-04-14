@@ -1,6 +1,9 @@
 import React, { useState } from 'react';
 import { initializeApp } from 'firebase/app';
 import { getAuth, createUserWithEmailAndPassword } from 'firebase/auth';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
 
 const firebaseConfig = {
   apiKey: "AIzaSyAaSn-jTG1Kkjaxf2_AeqzwAe69f7jWPeg",
@@ -38,6 +41,9 @@ export default function Signup() {
         const errorCode = error.code;
         const errorMessage = error.message;
         console.error("Registration error:", errorMessage);
+        const errorText = errorMessage.split("/")[1];
+console.log(errorText);
+        toast.error(errorText);
       });
   };
 
@@ -48,6 +54,8 @@ export default function Signup() {
 
   return (
     <main className="w-full flex">
+          <ToastContainer />
+
       <div className="relative flex-1 hidden items-center justify-center h-screen bg-gray-900 lg:flex">
         {/* Left Side Content */}
       </div>
