@@ -1,100 +1,113 @@
-import React, { useState } from 'react';
-import { initializeApp } from 'firebase/app';
-import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from 'firebase/auth';
-import { Link, useLocation } from "react-router-dom";
-import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import { useContext, useEffect, useState } from "react";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import { UserContext } from "../contexts/user.context";
 
-const firebaseConfig = {
-  apiKey: "AIzaSyAaSn-jTG1Kkjaxf2_AeqzwAe69f7jWPeg",
-  authDomain: "stutrack-20470.firebaseapp.com",
-  projectId: "stutrack-20470",
-  storageBucket: "stutrack-20470.appspot.com",
-  messagingSenderId: "736390886991",
-  appId: "1:736390886991:web:01afbfdab2c7cffb059c3a",
-  measurementId: "G-MT933W0LM3"
-};
+const Login = () => {
+  const navigate = useNavigate();
+  const location = useLocation();
 
-// Initialize Firebase
-initializeApp(firebaseConfig);
+  // We are consuming our user-management context to
+  // get & set the user details here
+  const { user, fetchUser, emailPasswordLogin } = useContext(UserContext);
 
-// Initialize Firebase Auth
-const auth = getAuth();
+  // We are using React's "useState" hook to keep track
+  //  of the form values.
+  const [form, setForm] = useState({
+    email: "",
+    password: ""
+  });
 
-export default function Login() {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-
-  const handleSignIn = (e) => {
-    e.preventDefault();
-    signInWithEmailAndPassword(auth, email, password)
-      .then((userCredential) => {
-        // Signed in successfully
-        const user = userCredential.user;
-        console.log("User signed in:", user.uid);
-        // Redirect or perform other actions
-      })
-      .catch((error) => {
-        // Handle errors here
-        const errorCode = error.code;
-        const errorMessage = error.message;
-        console.error("Sign in error:", errorMessage);
-        const errorText = errorMessage.split("/")[1];
-console.log(errorText);
-        toast.error(errorText);
-      });
+  // This function will be called whenever the user edits the form.
+  const onFormInputChange = (event) => {
+    const { name, value } = event.target;
+    setForm({ ...form, [name]: value });
   };
 
-  const handleSignUp = (e) => {
-    e.preventDefault();
-    createUserWithEmailAndPassword(auth, email, password)
-      .then((userCredential) => {
-        // Signed up successfully
-        const user = userCredential.user;
-        console.log("User registered:", user.uid);
-        // Redirect or perform other actions
-      })
-      .catch((error) => {
-        // Handle errors here
-        const errorCode = error.code;
-        const errorMessage = error.message;
-        console.error("Registration error:", errorMessage);
-        const errorText = errorMessage.split("/")[1];
-console.log(errorText);
-        toast.error(errorText);
-      });
+  // This function will redirect the user to the
+  // appropriate page once the authentication is done.
+  const redirectNow = () => {
+    const redirectTo = location.search.replace("?redirectTo=", "");
+    navigate(redirectTo ? redirectTo : "/");
+  }
+
+  // Once a user logs in to our app, we don’t want to ask them for their
+  // credentials again every time the user refreshes or revisits our app, 
+  // so we are checking if the user is already logged in and
+  // if so we are redirecting the user to the home page.
+  // Otherwise we will do nothing and let the user to login.
+  const loadUser = async () => {
+    if (!user) {
+      const fetchedUser = await fetchUser();
+      if (fetchedUser) {
+        // Redirecting them once fetched.
+        redirectNow();
+      }
+    }
+  }
+
+  // This useEffect will run only once when the component is mounted.
+  // Hence this is helping us in verifying whether the user is already logged in
+  // or not.
+  useEffect(() => {
+    loadUser(); // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // This function gets fired when the user clicks on the "Login" button.
+  const onSubmit = async (event) => {
+    event.preventDefault();
+    try {
+      // Here we are passing user details to our emailPasswordLogin
+      // function that we imported from our realm/authentication.js
+      // to validate the user credentials and log in the user into our App.
+      const user = await emailPasswordLogin(form.email, form.password);
+      if (user) {
+        redirectNow();
+      }
+    } catch (error) {
+      if (error.statusCode === 401) {
+        alert("Invalid username/password. Try again!");
+      } else {
+        alert(error);
+      }
+    }
   };
 
   return (
     <main className="w-full h-screen flex flex-col items-center justify-center px-4">
-          <ToastContainer />
-
-      <div className="max-w-sm w-full text-gray-600 space-y-5">
-        <div className="text-center pb-8">
-        <Link to="/">
-<h1 style={{ fontWeight: 'bold', fontSize: '2em' }}>StuTrack</h1>          </Link>
-          <div className="mt-5">
+      <div className="max-w-sm w-full text-gray-600">
+        <div className="text-center">
+          <img src="https://floatui.com/logo.svg" alt="logo" width={150} className="mx-auto" />
+          <div className="mt-5 space-y-2">
             <h3 className="text-gray-800 text-2xl font-bold sm:text-3xl">Log in to your account</h3>
+            <p>Don't have an account? <Link to="/signup" className="font-medium text-indigo-600 hover:text-indigo-500">Signup</Link></p>
           </div>
         </div>
-        <form onSubmit={handleSignIn} className="space-y-5">
+        <form onSubmit={onSubmit} className="mt-8 space-y-5">
           <div>
-            <label className="font-medium">Email</label>
+            <label htmlFor="email" className="font-medium">
+              Email
+            </label>
             <input
+              id="email"
               type="email"
               required
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              name="email"
+              value={form.email}
+              onChange={onFormInputChange}
               className="w-full mt-2 px-3 py-2 text-gray-500 bg-transparent outline-none border focus:border-indigo-600 shadow-sm rounded-lg"
             />
           </div>
           <div>
-            <label className="font-medium">Password</label>
+            <label htmlFor="password" className="font-medium">
+              Password
+            </label>
             <input
+              id="password"
               type="password"
               required
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
+              name="password"
+              value={form.password}
+              onChange={onFormInputChange}
               className="w-full mt-2 px-3 py-2 text-gray-500 bg-transparent outline-none border focus:border-indigo-600 shadow-sm rounded-lg"
             />
           </div>
@@ -104,9 +117,13 @@ console.log(errorText);
           >
             Sign in
           </button>
+          <div className="text-center">
+            <a href="#" className="hover:text-indigo-600">Forgot password?</a>
+          </div>
         </form>
-        <p className="text-center">Don't have an account? <a href="/signup" className="font-medium text-indigo-600 hover:text-indigo-500">Sign up</a></p>
       </div>
     </main>
   );
 }
+
+export default Login;

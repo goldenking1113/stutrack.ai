@@ -1,113 +1,102 @@
-import React, { useState } from 'react';
-import { initializeApp } from 'firebase/app';
-import { getAuth, createUserWithEmailAndPassword } from 'firebase/auth';
-import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import React, { useContext, useState, useEffect } from "react";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import { UserContext } from "../contexts/user.context";
 
+const Signup = () => {
+  const navigate = useNavigate();
+  const location = useLocation();
+  const { emailPasswordSignup, verifyUser } = useContext(UserContext);
+  const [form, setForm] = useState({ email: "", password: "" });
+  const [error, setError] = useState("");
 
-const firebaseConfig = {
-  apiKey: "AIzaSyAaSn-jTG1Kkjaxf2_AeqzwAe69f7jWPeg",
-  authDomain: "stutrack-20470.firebaseapp.com",
-  projectId: "stutrack-20470",
-  storageBucket: "stutrack-20470.appspot.com",
-  messagingSenderId: "736390886991",
-  appId: "1:736390886991:web:01afbfdab2c7cffb059c3a",
-  measurementId: "G-MT933W0LM3"
-};
+  useEffect(() => {
+    // Extract token and tokenId from URL parameters
+    const searchParams = new URLSearchParams(location.search);
+    const token = searchParams.get("token");
+    const tokenId = searchParams.get("tokenId");
 
-// Initialize Firebase
-initializeApp(firebaseConfig);
+    // Perform user verification if token and tokenId exist
+    if (token && tokenId) {
+      handleUserVerification(token, tokenId);
+    }
+  }, [location.search]); // Re-run effect when URL parameters change
 
-// Initialize Firebase Auth
-const auth = getAuth();
-
-export default function Signup() {
-  const [name, setName] = useState('');
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-
-  const handleSignUp = (e) => {
-    e.preventDefault();
-    createUserWithEmailAndPassword(auth, email, password)
-      .then((userCredential) => {
-        // Signed up successfully
-        const user = userCredential.user;
-        console.log("User registered:", user.uid);
-        // Redirect to login page after successful registration
-        redirectToLogin();
-      })
-      .catch((error) => {
-        // Handle errors here
-        const errorCode = error.code;
-        const errorMessage = error.message;
-        console.error("Registration error:", errorMessage);
-        const errorText = errorMessage.split("/")[1];
-console.log(errorText);
-        toast.error(errorText);
-      });
+  const handleUserVerification = async (token, tokenId) => {
+    try {
+      // Perform user verification
+      await verifyUser(token, tokenId);
+      // Redirect user to the desired page upon successful verification
+      navigate("/"); // Change to the desired destination
+    } catch (error) {
+      console.error("User verification failed:", error);
+      // Handle failure (e.g., display error message)
+    }
   };
 
-  const redirectToLogin = () => {
-    // Redirect logic here
-    window.location.href = '/login'; // Redirect using window.location
+  const onFormInputChange = (event) => {
+    const { name, value } = event.target;
+    setForm({ ...form, [name]: value });
+  };
+
+  const onSubmit = async (event) => {
+    event.preventDefault();
+    try {
+      const user = await emailPasswordSignup(form.email, form.password);
+      if (user) navigate("/"); // Redirect to home page after signup
+    } catch (error) {
+      setError(error.message);
+    }
   };
 
   return (
-    <main className="w-full flex">
-          <ToastContainer />
-
-      <div className="relative flex-1 hidden items-center justify-center h-screen bg-gray-900 lg:flex">
-        {/* Left Side Content */}
-      </div>
-      <div className="flex-1 flex items-center justify-center h-screen">
-        <div className="w-full max-w-md space-y-8 px-4 bg-white text-gray-600 sm:px-0">
-          <div className="">
-            <img src="https://floatui.com/logo.svg" width={150} className="lg:hidden" alt="Logo" />
-            <div className="mt-5 space-y-2">
-              <h3 className="text-gray-800 text-2xl font-bold sm:text-3xl">Sign up</h3>
-              <p className="">Already have an account? <a href="/login" className="font-medium text-indigo-600 hover:text-indigo-500">Log in</a></p>
-            </div>
+    <main className="w-full h-screen flex flex-col items-center justify-center px-4">
+      <div className="max-w-sm w-full text-gray-600">
+        <div className="text-center">
+          <img src="https://floatui.com/logo.svg" width={150} className="mx-auto" />
+          <div className="mt-5 space-y-2">
+            <h3 className="text-gray-800 text-2xl font-bold sm:text-3xl">Sign up for an account</h3>
+            <p>Already have an account? <Link to="/login" className="font-medium text-indigo-600 hover:text-indigo-500">Sign in</Link></p>
           </div>
-          <form onSubmit={handleSignUp} className="space-y-5">
-            <div>
-              <label className="font-medium">Name</label>
-              <input
-                type="text"
-                required
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                className="w-full mt-2 px-3 py-2 text-gray-500 bg-transparent outline-none border focus:border-indigo-600 shadow-sm rounded-lg"
-              />
-            </div>
-            <div>
-              <label className="font-medium">Email</label>
-              <input
-                type="email"
-                required
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="w-full mt-2 px-3 py-2 text-gray-500 bg-transparent outline-none border focus:border-indigo-600 shadow-sm rounded-lg"
-              />
-            </div>
-            <div>
-              <label className="font-medium">Password</label>
-              <input
-                type="password"
-                required
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                className="w-full mt-2 px-3 py-2 text-gray-500 bg-transparent outline-none border focus:border-indigo-600 shadow-sm rounded-lg"
-              />
-            </div>
-            <button
-              type="submit"
-              className="w-full px-4 py-2 text-white font-medium bg-indigo-600 hover:bg-indigo-500 active:bg-indigo-600 rounded-lg duration-150"
-            >
-              Create account
-            </button>
-          </form>
         </div>
+        <form className="mt-8 space-y-5" onSubmit={onSubmit}>
+          <div>
+            <label htmlFor="email" className="font-medium">Email</label>
+            <input
+              id="email"
+              type="email"
+              name="email"
+              value={form.email}
+              onChange={onFormInputChange}
+              required
+              className="w-full mt-2 px-3 py-2 text-gray-500 bg-transparent outline-none border focus:border-indigo-600 shadow-sm rounded-lg"
+            />
+          </div>
+          <div>
+            <label htmlFor="password" className="font-medium">Password</label>
+            <input
+              id="password"
+              type="password"
+              name="password"
+              value={form.password}
+              onChange={onFormInputChange}
+              required
+              className="w-full mt-2 px-3 py-2 text-gray-500 bg-transparent outline-none border focus:border-indigo-600 shadow-sm rounded-lg"
+            />
+          </div>
+          <button
+            type="submit"
+            className="w-full px-4 py-2 text-white font-medium bg-indigo-600 hover:bg-indigo-500 active:bg-indigo-600 rounded-lg duration-150"
+          >
+            Sign Up
+          </button>
+          {error && <div className="text-red-500">{error}</div>}
+          <div className="text-center">
+            <Link to="/forgot-password" className="text-indigo-600 hover:text-indigo-500">Forgot password?</Link>
+          </div>
+        </form>
       </div>
     </main>
   );
-}
+};
+
+export default Signup;
