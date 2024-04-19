@@ -27,7 +27,7 @@ const Login = () => {
   // appropriate page once the authentication is done.
   const redirectNow = () => {
     const redirectTo = location.search.replace("?redirectTo=", "");
-    navigate(redirectTo ? redirectTo : "/");
+    navigate(redirectTo ? redirectTo : "/PageRedirect");
   }
 
   // Once a user logs in to our app, we don’t want to ask them for their

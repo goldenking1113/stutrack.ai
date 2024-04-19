@@ -7,6 +7,35 @@ export default function UploadFile() {
     setMode(mode === 'file' ? 'url' : 'file'); // Toggle between 'file' and 'url'
   };
 
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    // Construct FormData object
+    const formData = new FormData();
+    formData.append('title', e.target.title.value);
+    formData.append('description', e.target.description.value);
+    if (mode === 'file') {
+      formData.append('file', e.target.file.files[0]);
+    } else {
+      formData.append('url', e.target.url.value);
+    }
+
+    // Make POST request
+    try {
+      const response = await fetch('http://localhost:5050/classroom', {
+        method: 'POST',
+        body: formData,
+      });
+      if (!response.ok) {
+        throw new Error('Upload failed');
+      }
+      // Handle success
+      console.log('File uploaded successfully');
+    } catch (error) {
+      console.error('Error uploading file:', error.message);
+    }
+  };
+
   return (
     <>
       <div className="flex items-center justify-center p-12">
@@ -29,7 +58,7 @@ export default function UploadFile() {
               Attach URL
             </button>
           </div>
-          <form className="py-6 px-9">
+          <form className="py-6 px-9" onSubmit={handleSubmit}>
             {mode === 'file' && (
               <>
                 <div className="mb-5">
@@ -130,7 +159,7 @@ export default function UploadFile() {
               </>
             )}
             <div>
-              <button className="hover:shadow-form w-full rounded-md bg-[#6A64F1] py-3 px-8 text-center text-base font-semibold text-white outline-none">
+              <button type="submit" className="hover:shadow-form w-full rounded-md bg-[#6A64F1] py-3 px-8 text-center text-base font-semibold text-white outline-none">
                 Upload File
               </button>
             </div>

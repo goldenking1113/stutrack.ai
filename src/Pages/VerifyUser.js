@@ -1,8 +1,6 @@
 import React, { useEffect } from 'react'
 import { useLocation } from 'react-router-dom';
 import { App } from "realm-web";
-import FaultyDashboard from './FaultyDashboard';
-import StudentsDashboard from './StudentsDashboard';
 import { useNavigate } from 'react-router-dom';
 import { ToastContainer, toast } from 'react-toastify';
 
@@ -14,7 +12,7 @@ export default function VerifyUser() {
     const searchParams = new URLSearchParams(location.search);
     const token = searchParams.get('token');
     const tokenId = searchParams.get('tokenId');
-    const navigate = useNavigate(); // Move useNavigate hook to the top level
+    const navigate = useNavigate();
 
     useEffect(() => {
         const confirmUser = async () => {
@@ -26,7 +24,7 @@ export default function VerifyUser() {
 
                 // Navigate to StudentsDashboard
                 setTimeout(() => {
-                    navigate("/StudentsDashboard");
+                    navigate("/PageRedirect");
                 }, 2000);
 
                 // Show toast notification

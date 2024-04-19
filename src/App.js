@@ -21,7 +21,7 @@ import PrivateRoute from "./Pages/PrivateRoute.page";
 import VerifyUser from "./Pages/VerifyUser";
 import FaultyDashboard from "./Pages/FaultyDashboard";
 import StudentsDashboard from "./Pages/StudentsDashboard";
-
+import PageRedirect from "./Pages/pageredirect";
 function App() {
   return (
 <Router>
@@ -45,12 +45,13 @@ function App() {
         <Route path="/testing" element={<Testing />} />
         <Route path="/FaultyDashboard" element={<FaultyDashboard />} />
         <Route path="/StudentsDashboard" element={<StudentsDashboard />} />
+        <Route path="/PageRedirect" element={<PageRedirect />} />
 
         {/* Authentication routes */}
         <Route path="/signup" element={<Signup />} />
         <Route path="/login" element={<Login />} />
         <Route element={<PrivateRoute />}>
-          <Route exact path="/testing" element={<Testing />} />
+        <Route path="/PageRedirect" element={<PageRedirect />} />
         </Route>
         <Route exact path="/verify-user" element={<VerifyUser />} />
       </Routes>

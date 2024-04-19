@@ -39,13 +39,13 @@ export default function Home() {
           <NavBar />
 
       <Hero />
-           <h1>Welcome to Expengo</h1>
+           {/* <h1>Welcome to Expengo</h1>
            {user ? (
         <p>Welcome, {user.profile.email}!</p>
       ) : (
         <p>Please log in to access this content.</p>
       )}
-     <Button variant="contained" onClick={logOut}>Logout</Button>
+     <Button variant="contained" onClick={logOut}>Logout</Button> */}
       <Partners />
       <HowWorks />
       <CompanySpotlight />

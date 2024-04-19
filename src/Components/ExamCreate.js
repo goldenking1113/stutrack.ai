@@ -1,8 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { useNavigate} from "react-router-dom";
 
 export default function ExamCreate() {
+    let navigate = useNavigate();
+
     const [questions, setQuestions] = useState(Array(4).fill(3)); // Initialize with default value
     const [quizData, setQuizData] = useState(null);
 
@@ -134,7 +137,7 @@ export default function ExamCreate() {
             paragraph: generatedText,
             numberOfQuestions: numberOfQuestions
         };
-
+    
         fetch('https://texttoquizz.onrender.com/generateQuiz', {
             method: 'POST',
             headers: {
@@ -151,13 +154,47 @@ export default function ExamCreate() {
             }
         })
         .then(quizData => {
-            setQuizData(quizData); // Update quizData state
-            toast.success('Quiz generated successfully!');
+            // Transform quizData to match the format expected by http://localhost:5050/quizz
+            const transformedQuizData = {
+                questions: quizData.quiz.questions.map(question => ({
+                    question: question.question,
+                    options: question.options,
+                    correct_answer: question.correct_answer
+                }))
+            };
+    
+            // Post transformedQuizData to http://localhost:5050/quizz
+            fetch('http://localhost:5050/quizz', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(transformedQuizData)
+            })
+            .then(response => {
+                if (response.ok) {
+                    console.log('Quiz data posted successfully!');
+                    // Optionally, you can handle any response from the server here
+                } else {
+                    console.error('Failed to post quiz data:', response.statusText);
+                    throw new Error('Failed to post quiz data');
+                }
+            })
+            .catch(error => {
+                console.error('Error posting quiz data:', error);
+                // Optionally, handle the error here
+            });
+    
+            // Update quizData state
+            setQuizData(quizData);
+            toast.success('Quiz generated successfully!'); 
         })
         .catch(error => {
             toast.error('Failed to generate quiz');
         });
     }
+    
+    
 
     const incrementQuestions = (index) => {
         setQuestions(prevQuestions => {
@@ -190,10 +227,32 @@ export default function ExamCreate() {
     }, [quizData]);
     
 
+
     return (
         <>
         <ToastContainer />
         <section className="relative mt-20">
+        <button
+  type="button"
+  className="w-full m-10 flex items-center justify-center w-1/2 px-5 py-2 text-sm text-gray-700 transition-colors duration-200 bg-white border rounded-lg gap-x-2 sm:w-auto dark:hover:bg-gray-800 dark:bg-gray-900 hover:bg-gray-100 dark:text-gray-200 dark:border-gray-700"
+>
+  <svg
+    className="w-5 h-5 rtl:rotate-180"
+    xmlns="http://www.w3.org/2000/svg"
+    fill="none"
+    viewBox="0 0 24 24"
+    strokeWidth="1.5"
+    stroke="currentColor"
+  >
+    <path
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      d="M6.75 15.75L3 12m0 0l3.75-3.75M3 12h18"
+    />
+  </svg>
+  <span>Go back</span>
+</button>
+
             <div className="flex flex-wrap justify-center">
                 {features.map((item, idx) => (
                     <div key={idx} className="flex flex-col max-w-md bg-white rounded-lg shadow-md p-6 m-4">
