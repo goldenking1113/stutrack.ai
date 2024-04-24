@@ -1,7 +1,13 @@
 import React, { useState, useEffect } from "react";
-import StudentsDetails from "./StudentsDetails";
+import StudentsDetails from "./StuStudentsDetails";
+
+import { useContext } from 'react';
+import { UserContext } from '../contexts/user.context';
 
 export default function StudentsList() {
+  const { user } = useContext(UserContext);
+  const logedCurrentUser = user;
+  console.log(logedCurrentUser);
   const [students, setStudents] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [filters, setFilters] = useState({
@@ -89,7 +95,7 @@ export default function StudentsList() {
           <select
             className="border-gray-300 border rounded-md px-4 py-2 focus:outline-none focus:ring focus:border-revenet"
             value={filters.batch}
-            onChange={(e) => setFilters({ ...filters, batch: e.target.value })}
+            onChange={(e) => setFilters(logedCurrentUser.user_details.batch)}
           >
             <option value="">All Batches</option>
             <option value="2021 - 2025 (III Year)">

@@ -33,27 +33,27 @@ export default function StudentsDetails({ student, onBack }) {
     const fetchData = async () => {
       try {
         if (matchedUsernames && matchedUsernames.leetcode) {
-          const leetCodeResponse = await fetch(`http://localhost:8000/leetcode/${matchedUsernames.leetcode}`);
+          const leetCodeResponse = await fetch(`https://stu-track-score.vercel.app/leetcode/${matchedUsernames.leetcode}`);
           const leetCodeData = await leetCodeResponse.json();
           setUserData(leetCodeData);
         }
         if (matchedUsernames && matchedUsernames.codeforces) {
-          const codeforcesResponse = await fetch(`http://localhost:8000/codeforces/${matchedUsernames.codeforces}`);
+          const codeforcesResponse = await fetch(`https://stu-track-score.vercel.app/codeforces/${matchedUsernames.codeforces}`);
           const codeforcesData = await codeforcesResponse.json();
           setCodeforcesData(codeforcesData);
         }
         if (matchedUsernames && matchedUsernames.codechef) {
-          const codechefResponse = await fetch(`http://localhost:8000/codechef/${matchedUsernames.codechef}`);
+          const codechefResponse = await fetch(`https://stu-track-score.vercel.app/codechef/${matchedUsernames.codechef}`);
           const codechefData = await codechefResponse.json();
           setCodechefData(codechefData);
         }
         if (matchedUsernames && matchedUsernames.hackerrank) {
-          const hackerrankResponse = await fetch(`http://localhost:8000/hackerrank/${matchedUsernames.hackerrank}`);
+          const hackerrankResponse = await fetch(`https://stu-track-score.vercel.app/hackerrank/${matchedUsernames.hackerrank}`);
           const hackerrankData = await hackerrankResponse.json();
           setHackerrankData(hackerrankData);
         }
         if (matchedUsernames && matchedUsernames.hackerearth) {
-          const hackerearthResponse = await fetch(`http://localhost:8000/hackerearth/${matchedUsernames.hackerearth}`);
+          const hackerearthResponse = await fetch(`https://stu-track-score.vercel.app/hackerearth/${matchedUsernames.hackerearth}`);
           const hackerearthData = await hackerearthResponse.json();
           setHackerearthData(hackerearthData);
         }

@@ -17,7 +17,7 @@ export const UserProvider = ({ children }) => {
     const fetchData = async () => {
       try {
         const response = await fetch(
-          `http://localhost:5050/user_details/${user.profile.email}`
+          `https://stutrackai-server-phi.vercel.app/user_details/${user.profile.email}`
         );
         const data = await response.json();
         setLogedCurrentUser(data);

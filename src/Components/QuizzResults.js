@@ -10,7 +10,7 @@ export default function QuizResultsPage() {
 
   const fetchQuizResults = async () => {
     try {
-      const response = await axios.get('http://localhost:5050/results');
+      const response = await axios.get('https://stutrackai-server-phi.vercel.app/results');
       setQuizResults(response.data);
     } catch (error) {
       console.error('Error fetching quiz results:', error);

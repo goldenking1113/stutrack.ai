@@ -5,7 +5,7 @@ export default function FileDisplay() {
 
   useEffect(() => {
     // Fetch data from the API
-    fetch('http://localhost:5050/classroom')
+    fetch('https://stutrackai-server-phi.vercel.app/classroom')
       .then(response => response.json())
       .then(data => {
         // Set the classrooms state with the fetched data
@@ -17,7 +17,7 @@ export default function FileDisplay() {
   }, []); // Empty dependency array to fetch data only once when component mounts
 
   return (
-    <div className="bg-white shadow rounded-lg mb-4 p-4 sm:p-6 h-full">
+    <div className="mb-4 p-4 sm:p-6 h-full">
       <div className="flex items-center justify-between mb-4">
         <h3 className="text-xl font-bold leading-none text-gray-900">
           Latest Files

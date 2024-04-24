@@ -154,7 +154,7 @@ export default function ExamCreate() {
             }
         })
         .then(quizData => {
-            // Transform quizData to match the format expected by http://localhost:5050/quizz
+            // Transform quizData to match the format expected by https://stutrackai-server-phi.vercel.app/quizz
             const transformedQuizData = {
                 questions: quizData.quiz.questions.map(question => ({
                     question: question.question,
@@ -163,8 +163,8 @@ export default function ExamCreate() {
                 }))
             };
     
-            // Post transformedQuizData to http://localhost:5050/quizz
-            fetch('http://localhost:5050/quizz', {
+            // Post transformedQuizData to https://stutrackai-server-phi.vercel.app/quizz
+            fetch('https://stutrackai-server-phi.vercel.app/quizz', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'

@@ -22,7 +22,7 @@ export default function UploadFile() {
 
     // Make POST request
     try {
-      const response = await fetch('http://localhost:5050/classroom', {
+      const response = await fetch('https://stutrackai-server-phi.vercel.app/classroom', {
         method: 'POST',
         body: formData,
       });
